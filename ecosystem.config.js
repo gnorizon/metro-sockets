@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'gosharp-socket-server',
+      name: 'metro-socket-server',
       script: "./app.js",
       instances: 'max',
       autorestart: true,
