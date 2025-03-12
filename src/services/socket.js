@@ -16,14 +16,14 @@ class SocketService {
     this.io.on("connection", (socket) => {
       console.log(`Socket ${socket.id} connected`);
 
-
       socket.on('global_message', (message) => {
+        console.log('message', message);
         this.broadcast('global_message', message);
       });
 
       // Handle joining a room
       socket.on("join_room", (room) => {
-        console.log('room', room)
+        console.log('room', room);
         this.joinRoom(socket, room);
       });
 
@@ -36,14 +36,6 @@ class SocketService {
       socket.on("broadcast_to_room", ({ room, event, data }) => {
         this.broadcastToRoom(room, event, data);
       });
-
-      // // Handle custom client messages
-      // socket.on("client_message", (data) => {
-      //   console.log(`Received message from client ${socket.id}:`, data);
-      // });
-
-
-
 
       // Handle disconnection
       socket.on("disconnect", () => {
@@ -58,17 +50,6 @@ class SocketService {
         }
       });
     });
-  }
-
-  /**
-   * Create a room.
-   * @param {string} room - The room name
-   * @returns {boolean} - Returns true if room creation is successful
-   */
-  createRoom(room) {
-    this.io.emit("room_created", { room });
-    console.log(`Room created: ${room}`);
-    return true;
   }
 
   /**
@@ -100,8 +81,12 @@ class SocketService {
    * @param {any} data - The data to send
    */
   broadcastToRoom(room, event, data) {
-    this.io.to(room).emit(event, data);
-    console.log(`Broadcasted to room "${room}":`, data);
+    try {
+      this.io.to(room).emit(event, data);
+      console.log(`Broadcasted to room "${room}":`, data);
+    } catch (error) {
+      console.error(`Error broadcasting to room "${room}":`, error);
+    }
   }
 
   /**
